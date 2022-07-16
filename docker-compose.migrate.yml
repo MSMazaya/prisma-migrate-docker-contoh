@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - "./postgres:/var/lib/postgresql/data"
+
+  prisma-migrate:
+    container_name: prisma-migrate
+    build: 
+      context: .
+      dockerfile: ./prisma/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/loadtest
+    depends_on:
+      - postgres
+  
+volumes:
+  postgres:
+    name: nest-prisma-docker-db
+
+networks: 
+  postgres: 
+    external: 
+      name: postgres
